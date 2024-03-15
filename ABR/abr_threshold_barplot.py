@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# read csv
 abr_th_before = pd.read_csv('ABR_threshold_20240222.csv', header=0)
 abr_th_after = pd.read_csv('20240307_threshold_change.csv', header=0)
 
@@ -24,7 +25,7 @@ ax.bar(x=x+width/2, height=mean_after, yerr=std_after, width=width*0.9, capsize=
 ax.set_xlabel('Frequency (kHz)', fontsize=16)
 ax.set_ylabel('Sound Pressure Level (dB SPL)', fontsize=16)
 ax.set_xscale('log')
-ax.set_xticks([2, 4, 8, 16, 32])
+ax.set_xticks([2, 4, 8, 16, 32]) # freqency
 ax.set_xticklabels(['2', '4', '8', '16', '32'])
 ax.tick_params(axis='x', which='both', bottom=True)
 ax.tick_params(axis='x', which='minor', bottom=False)
