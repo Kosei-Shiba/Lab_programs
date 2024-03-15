@@ -1,19 +1,20 @@
 """
 created on June 9th 2023
 created by Shiba Kosei
-目的:ABRデータからZscoreを計算する
+purpose:calculate Zscore by ABR
 """
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-Srate = 4e-2 #サンプリング[ms]
-dataN = 487 #時間軸データ数
-statime = -10 #計測開始点（triggerに対して）
+Srate = 4e-2 # sampling cycle(ms)
+dataN = 487 # time data
+statime = -10 #　measurement start（trigger is 0）
 abr_wave = pd.read_csv('abr_20240307_A_click.csv', usecols=[*range(48, 48+dataN)])
 
 df = abr_wave.T
+# setting columns
 if len(abr_wave) == 7:
     df.columns = [ '80dB', '70dB', '60dB', '50dB', '40dB', '30dB', '20dB']
 elif len(abr_wave) == 15:
@@ -23,13 +24,13 @@ elif len(abr_wave) == 15:
              '15dB SPL', '10dB SPL']
 else:
     """
-    その都度カラムを設定する
+    set solumns each time
     """
     df.columns = ['Pre', 'tb1', 'tb2', 'T5', 'T15']
     #df.columns = ['tbUS']
 df.insert(0, 'time[ms]', np.arange(statime, Srate*dataN+statime, Srate))
 
-#基準区間での統計量計算
+# calculate statistics
 ave = df[(df['time[ms]'] <= 0) & (df['time[ms]']>=-10)].mean()
 sd = df[(df['time[ms]'] <= 0) & (df['time[ms]']>=-10)].std()
 #df = df.abs()
@@ -38,5 +39,3 @@ response = df[(df['time[ms]'] >= 0.5) & (df['time[ms]'] <= 2.5)].max()
 z_score = (response-ave)/sd
 #print(df[(df['time[ms]'] >= 0.5) & (df['time[ms]'] <= 2.5)].idxmax())
 print(z_score.iloc[1:len(z_score)])
-
-#閾値決定
