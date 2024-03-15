@@ -1,19 +1,20 @@
 """
 created on June 7th 2023
 created by Shiba Kosei
-目的: ABR波形の描画
+purpose: plot ABR wave
 """
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-Srate = 4e-2 #サンプリング周期[ms]
-dataN = 487 #時間軸データ数
-statime = -10 #計測開始点（triggerに対して）
+Srate = 4e-2 # sampling cycle(ms)
+dataN = 487 # time data
+statime = -10 # measurement start（trigger is 0）
 abr_wave = pd.read_csv('abr_20240222_A_tone2k.csv', usecols=[*range(48, 48+dataN)])
 
 df = abr_wave.T
+# setting columns
 if len(abr_wave) == 7:
     df.columns = [ '80 dB SPL', '70 dB SPL', '60 dB SPL', '50 dB SPL', '40 dB SPL', '30 dB SPL', '20 dB SPL']
 elif len(abr_wave) == 15:
@@ -23,13 +24,14 @@ elif len(abr_wave) == 15:
              '15 dB SPL', '10 dB SPL']
 else:
     """
-    その都度カラムを設定する
+    set solumns each time
     """
     df.columns = ['Sound\n(Pre)', 'TBUS 1', 'TBUS 2', 'Sound\n(Post5)', 'Sound\n(Post15)']
     #df.columns = ['tbUS']
+
 df.insert(0, 'time[ms]', np.arange(statime, Srate*dataN+statime, Srate))
 
-#個別の波形をそれぞれ表示
+# plot each wave
 fig_shape = (5,10)
 num_list = list(df.select_dtypes(exclude=object).columns)
 fig, ax = plt.subplots(len(num_list)-1, 1, figsize=fig_shape)
@@ -57,13 +59,13 @@ for i in range(len(num_list)-1):
     
     
     
-#全体の目盛やラベルの設定
+# set overrall scales and labels
 ax_main = ax[-1]
-ax_main.plot(df['time[ms]'], np.zeros_like(df['time[ms]']), visible=False)  # ダミーのプロットを追加してメモリを生成
-ax_main.set_xticks(np.arange(-2, 10, 2))  # メモリの位置を設定
+ax_main.plot(df['time[ms]'], np.zeros_like(df['time[ms]']), visible=False)  # add dummy plot for scale
+ax_main.set_xticks(np.arange(-2, 10, 2))  # set scale position
 ax_main.spines['bottom'].set_position(('outward', 10))
 ax_main.spines['bottom'].set_visible(True)
-ax_main.tick_params(bottom=True, top=False)  # メインX軸の下のメモリは非表示にし、上のメモリを表示
+ax_main.tick_params(bottom=True, top=False)  # hidden top scale
 ax_main.yaxis.tick_right()
 ax_main.yaxis.set_label_position("right")
 ax_main.set_yticks(np.arange(-1, 2, 1))
@@ -75,8 +77,5 @@ fig.supxlabel('Time (ms)', fontsize=16)
 plt.subplots_adjust(left=0.2, right=0.9, top=0.95, bottom=0.1, hspace=0.01)
 plt.text(11,0,'\u00B5V')
 plt.text(-0.20,88.0, '▼ onset')
-"""
-ylim=(-2,2)ならばonset表示26.5
-"""
 
 plt.show()
