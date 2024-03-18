@@ -37,8 +37,6 @@ num_list = list(df.select_dtypes(exclude=object).columns)
 fig, ax = plt.subplots(len(num_list)-1, 1, figsize=fig_shape)
 
 for i in range(len(num_list)-1):
-    
-    #1枚のfig
     ax[i].plot(df['time[ms]'], df[num_list[i+1]], c='k')
     ax[i].set_ylabel(num_list[i+1], rotation=0, fontsize=12)
     ax[i].yaxis.set_label_coords(-0.15, 0.5)
